@@ -1,0 +1,21 @@
+---
+- name: Install Nginx on Windows
+  hosts: 172.16.0.176
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: Download Nginx MSI installer
+      win_get_url:
+        url: https://nginx.org/download/nginx-1.21.3.msi  # Replace with the URL of the Nginx MSI installer
+        dest: C:\nginx-installer\nginx-1.21.3.msi
+
+    - name: Install Nginx
+      win_command: msiexec /i C:\nginx-installer\nginx-1.21.3.msi /qn
+      async: 1200  # Adjust the timeout as needed
+      poll: 0
+      register: nginx_install_result
+
+    - name: Check Nginx installation result
+      debug:
+        var: nginx_install_result
